@@ -45,14 +45,14 @@ public class SecurityConfig {
                         //TODO Application resolve Both (JS and Thymleaf)
                 )
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/auth/**").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN") //TODO Use @preAuth
-//                        .requestMatchers("/member/**").hasAnyRole("USER", "ADMIN")
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
-                );
-//                .addFilterBefore(jwtAuthenticationFilter,
-//                        UsernamePasswordAuthenticationFilter.class);
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN") //TODO Use @preAuth
+                        .requestMatchers("/member/**").hasAnyRole("USER", "ADMIN")
+                        .anyRequest().authenticated()
+                                .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

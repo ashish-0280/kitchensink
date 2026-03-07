@@ -33,15 +33,20 @@ public class AdminController {
         return ResponseEntity.ok(memberService.getById(id));
     }
 
-//    @PutMapping("/members/{id}")
-//    public ResponseEntity<MemberResponseDto> updateMember(@PathVariable String id, @Valid @RequestBody MemberRequestDto member) {
-//
-//        return ResponseEntity.ok(memberService.update(id, member));
-//    }
-//
-//    @DeleteMapping("/members/{id}")
-//    public ResponseEntity<Void> deleteMember(@PathVariable String id) {
-//        memberService.delete(id);
-//        return ResponseEntity.noContent().build();
-//    }
+    @GetMapping("/members/profile/{id}")
+    public String viewMemberProfile(@PathVariable String id, Model model){
+
+        MemberResponseDto member = memberService.getById(id);
+
+        model.addAttribute("user", member);
+
+        return "profile";
+    }
+
+    @DeleteMapping("/members/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteMember(@PathVariable String id){
+        memberService.delete(id);
+        return ResponseEntity.ok("Deleted");
+    }
 }

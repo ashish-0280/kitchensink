@@ -1,20 +1,84 @@
 <!DOCTYPE html>
 <html lang="en"
-xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Member-Profile</title>
-</head>
-<body>
+    <title>Member Profile</title>
 
-    <div>
-        <h1>Your Profile</h1>
-        <h3>Id:<strong th:text="${user.id}"></strong> </h3>
-        <h3>Name: <strong th:text="${user.name}"></strong> </h3>
-        <h3>Email: <strong th:text="${user.email}"></strong> </h3>
-        <h3>Phone: <strong th:text="${user.phone}"></strong> </h3>
-        <h3>Role: <strong th:text="${user.role}"></strong> </h3>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <style>
+
+        body{
+            background:#f4f6f9;
+        }
+
+        .profile-card{
+            max-width:500px;
+            margin:auto;
+            border:none;
+            border-radius:15px;
+            box-shadow:0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .profile-header{
+            background:linear-gradient(135deg,#4e73df,#224abe);
+            color:white;
+            padding:25px;
+            border-radius:15px 15px 0 0;
+            text-align:center;
+        }
+
+        .profile-info h5{
+            margin-bottom:12px;
+        }
+
+    </style>
+
+</head>
+
+<body class="container mt-5">
+
+<div class="card profile-card">
+
+    <div class="profile-header">
+        <h2>Member Profile</h2>
+        <p class="mb-0">Welcome back 👋</p>
     </div>
+
+    <div class="card-body profile-info">
+
+        <h5><strong>ID:</strong>
+            <span th:text="${user.id}"></span>
+        </h5>
+
+        <h5><strong>Name:</strong>
+            <span th:text="${user.name}"></span>
+        </h5>
+
+        <h5><strong>Email:</strong>
+            <span th:text="${user.email}"></span>
+        </h5>
+
+        <h5><strong>Phone:</strong>
+            <span th:text="${user.phone}"></span>
+        </h5>
+
+        <h5><strong>Role:</strong>
+            <span class="badge bg-primary"
+                  th:text="${user.role}"></span>
+        </h5>
+
+        <div class="mt-4 text-center">
+            <a href="/logout" class="btn btn-danger">
+                Logout
+            </a>
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>
