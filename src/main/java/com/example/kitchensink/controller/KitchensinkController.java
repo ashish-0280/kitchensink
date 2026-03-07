@@ -21,7 +21,7 @@ public class KitchensinkController {
         this.memberService = memberService;
     }
 
-    @GetMapping("/kitchensink-form")
+    @GetMapping("/kitchensink")
     public String showForm(Model model){
         model.addAttribute("user", new MemberRequestDto());
         return "kitchensink-form";

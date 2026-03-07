@@ -5,11 +5,13 @@ import com.example.kitchensink.dto.MemberResponseDto;
 import com.example.kitchensink.service.MemberService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/admin")
 public class AdminController {
 
@@ -20,8 +22,10 @@ public class AdminController {
     }
 
     @GetMapping("/members")
-    public ResponseEntity<List<MemberResponseDto>> getAllMembers() {
-        return ResponseEntity.ok(memberService.getAll());
+    public String getAllMembers(Model model) {
+        List<MemberResponseDto> list = memberService.getAll();
+        model.addAttribute("allMembers", list);
+        return "AdminDashboard";
     }
 
     @GetMapping("/members/{id}")

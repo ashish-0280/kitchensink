@@ -6,24 +6,24 @@
 </head>
 <body class="container mt-5">
     <h1>THIS IS ADMIN DASHBOARD</h1>
-    <div class="container mt-4">
-    <h3>Admin Panel - Add New Member</h3>
+<!--    <div class="container mt-4">-->
+<!--    <h3>Admin Panel - Add New Member</h3>-->
 
-    <div class="card p-4 mb-5 shadow-sm">
-        <form th:action="@{/admin/add-member}" th:object="${memberRequest}" method="post">
-            <div class="row">
-                <div class="col-md-4">
-                    <input type="text" th:field="*{name}" class="form-control" placeholder="Full Name" required>
-                </div>
-                <div class="col-md-4">
-                    <input type="email" th:field="*{email}" class="form-control" placeholder="Email Address" required>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-success w-100">Add Member</button>
-                </div>
-            </div>
-        </form>
-    </div>
+<!--    <div class="card p-4 mb-5 shadow-sm">-->
+<!--        <form th:action="@{/admin/add-member}" th:object="${memberRequest}" method="post">-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-4">-->
+<!--                    <input type="text" th:field="*{name}" class="form-control" placeholder="Full Name" required>-->
+<!--                </div>-->
+<!--                <div class="col-md-4">-->
+<!--                    <input type="email" th:field="*{email}" class="form-control" placeholder="Email Address" required>-->
+<!--                </div>-->
+<!--                <div class="col-md-2">-->
+<!--                    <button type="submit" class="btn btn-success w-100">Add Member</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    </div>-->
 
     <h4>All Registered Members</h4>
     <table class="table table-bordered mt-3">
