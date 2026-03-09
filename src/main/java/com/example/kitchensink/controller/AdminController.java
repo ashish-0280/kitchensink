@@ -1,16 +1,14 @@
 package com.example.kitchensink.controller;
 
-import com.example.kitchensink.dto.MemberRequestDto;
 import com.example.kitchensink.dto.MemberResponseDto;
 import com.example.kitchensink.service.MemberService;
-import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -24,32 +22,44 @@ public class AdminController {
     }
 
     @GetMapping("/members")
-    public String getAllMembers(Model model) {
-        List<MemberResponseDto> list = memberService.getAll();
-        model.addAttribute("allMembers", list);
+    public String getAllMembers(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            Model model
+    ){
+
+        Pageable pageable = PageRequest.of(page,size);
+
+        Page<MemberResponseDto> members =
+                memberService.searchMembers(keyword,pageable);
+
+        model.addAttribute("allMembers",members.getContent());
+        model.addAttribute("currentPage",page);
+        model.addAttribute("totalPages",members.getTotalPages());
+        model.addAttribute("keyword",keyword);
+
         return "AdminDashboard";
     }
 
-    @GetMapping("/members/{id}")
-    public ResponseEntity<MemberResponseDto> getMember(@PathVariable String id){
-        return ResponseEntity.ok(memberService.getById(id));
-    }
+    @GetMapping("/members/search")
+    @ResponseBody
+    public Page<MemberResponseDto> searchMembers(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ){
 
-    @GetMapping("/members/profile/{id}")
-    public String viewMemberProfile(@PathVariable String id, Model model){
+        Pageable pageable = PageRequest.of(page,size);
 
-        MemberResponseDto member = memberService.getById(id);
-
-        model.addAttribute("user", member);
-
-        return "profile";
+        return memberService.searchMembers(keyword,pageable);
     }
 
     @DeleteMapping("/members/{id}")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteMember(@PathVariable String id){
+    public String deleteMember(@PathVariable String id){
         memberService.delete(id);
-        return ResponseEntity.ok("Deleted");
+        return "Deleted";
     }
+
 }

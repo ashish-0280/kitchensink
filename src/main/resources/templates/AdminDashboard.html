@@ -72,11 +72,20 @@
 
             <h4 class="mb-0">All Registered Members</h4>
 
-            <input
-                    type="text"
-                    id="searchInput"
-                    class="form-control search-box"
-                    placeholder="Search member...">
+            <!-- Backend Search -->
+            <form method="get" action="/admin/members" class="d-flex">
+
+                <input
+                        type="text"
+                        id="searchInput"
+                        class="form-control search-box"
+                        placeholder="Search member...">
+
+                <button class="btn btn-primary ms-2">
+                    Search
+                </button>
+
+            </form>
 
         </div>
 
@@ -120,37 +129,34 @@
 
         </table>
 
+
+        <!-- Pagination -->
+        <div class="mt-4 text-center">
+
+            <a th:if="${currentPage > 0}"
+               th:href="@{/admin/members(page=${currentPage-1},keyword=${keyword})}"
+               class="btn btn-outline-primary btn-sm">
+                Previous
+            </a>
+
+            <span class="mx-2">
+                Page [[${currentPage+1}]] of [[${totalPages}]]
+            </span>
+
+            <a th:if="${currentPage < totalPages-1}"
+               th:href="@{/admin/members(page=${currentPage+1},keyword=${keyword})}"
+               class="btn btn-outline-primary btn-sm">
+                Next
+            </a>
+
+        </div>
+
     </div>
 
 </div>
 
 
 <script>
-
-    const searchInput = document.getElementById("searchInput");
-
-    searchInput.addEventListener("keyup", function(){
-
-        const filter = searchInput.value.toLowerCase();
-
-        const rows = document.querySelectorAll("#memberTable tr");
-
-        rows.forEach(row => {
-
-            const name = row.children[1].innerText.toLowerCase();
-            const email = row.children[2].innerText.toLowerCase();
-
-            if(name.includes(filter) || email.includes(filter)){
-                row.style.display="";
-            }else{
-                row.style.display="none";
-            }
-
-        });
-
-    });
-
-
 
     document.querySelectorAll(".delete-btn").forEach(btn => {
 
@@ -176,6 +182,53 @@
 
     });
 
+    const searchInput = document.getElementById("searchInput");
+const tableBody = document.getElementById("memberTable");
+
+let timer;
+
+searchInput.addEventListener("keyup", function(){
+
+    clearTimeout(timer);
+
+    timer = setTimeout(async () => {
+
+        const keyword = searchInput.value;
+
+        const response = await fetch(`/admin/members/search?keyword=${keyword}`);
+
+        const data = await response.json();
+
+        tableBody.innerHTML = "";
+
+        data.content.forEach(member => {
+
+            const row = `
+                <tr>
+                    <td>${member.id}</td>
+                    <td>${member.name}</td>
+                    <td>${member.email}</td>
+                    <td>
+                        <a class="btn btn-sm btn-primary"
+                           href="/admin/members/profile/${member.id}">
+                           View
+                        </a>
+
+                        <button class="btn btn-sm btn-danger delete-btn"
+                                data-id="${member.id}">
+                                Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            tableBody.innerHTML += row;
+
+        });
+
+    },300);
+
+});
 
 </script>
 

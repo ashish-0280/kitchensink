@@ -6,9 +6,9 @@ import com.example.kitchensink.exception.ResourceNotFoundException;
 import com.example.kitchensink.model.Member;
 import com.example.kitchensink.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MemberService {
@@ -21,46 +21,44 @@ public class MemberService {
         this.modelMapper = modelMapper;
     }
 
-    public MemberResponseDto create(MemberRequestDto requestDto) {
-        Member member = modelMapper.map(requestDto, Member.class);
-        Member saved = memberRepository.save(member);
-        return modelMapper.map(saved, MemberResponseDto.class);
+    public Page<MemberResponseDto> searchMembers(String keyword, Pageable pageable){
+
+        Page<Member> members;
+
+        if(keyword == null || keyword.isBlank()){
+            members = memberRepository.findAll(pageable);
+        }
+        else{
+            members = memberRepository.searchMembers(keyword,pageable);
+        }
+
+        return members.map(member ->
+                modelMapper.map(member,MemberResponseDto.class)
+        );
     }
 
-    public List<MemberResponseDto> getAll() {
-        return memberRepository.findAll()
-                .stream()
-                .map(member -> modelMapper.map(member, MemberResponseDto.class))
-                .collect(Collectors.toList());
-    }
+    public MemberResponseDto getById(String id){
 
-    public MemberResponseDto getById(String id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Member not found with id: " + id)
+                        new ResourceNotFoundException("Member not found with id: "+id)
                 );
-        return modelMapper.map(member, MemberResponseDto.class);
-    }
 
-    public MemberResponseDto update(String id, MemberRequestDto requestDto) {
-        Member existing = memberRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Member not found with id: " + id)
-                );
-        modelMapper.map(requestDto, existing);
-        Member updated = memberRepository.save(existing);
-        return modelMapper.map(updated, MemberResponseDto.class);
+        return modelMapper.map(member,MemberResponseDto.class);
     }
 
     public MemberResponseDto getByEmail(String email){
+
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found with email: " + email)
+                        new ResourceNotFoundException("User not found with email: "+email)
                 );
-        return modelMapper.map(member, MemberResponseDto.class);
+
+        return modelMapper.map(member,MemberResponseDto.class);
     }
 
-    public void delete(String id) {
+    public void delete(String id){
         memberRepository.deleteById(id);
     }
+
 }
