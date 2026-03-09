@@ -57,6 +57,21 @@ public class MemberService {
         return modelMapper.map(member,MemberResponseDto.class);
     }
 
+    public MemberResponseDto update(String id, MemberRequestDto dto){
+
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Member not found"));
+
+        member.setName(dto.getName());
+        member.setEmail(dto.getEmail());
+        member.setPhone(dto.getPhone());
+
+        Member updated = memberRepository.save(member);
+
+        return modelMapper.map(updated, MemberResponseDto.class);
+    }
+
     public void delete(String id){
         memberRepository.deleteById(id);
     }

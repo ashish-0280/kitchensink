@@ -1,5 +1,6 @@
 package com.example.kitchensink.controller;
 
+import com.example.kitchensink.dto.MemberRequestDto;
 import com.example.kitchensink.dto.MemberResponseDto;
 import com.example.kitchensink.service.MemberService;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,26 @@ public class AdminController {
 
     public AdminController(MemberService memberService) {
         this.memberService = memberService;
+    }
+
+    @GetMapping("/members/edit/{id}")
+    public String editMember(@PathVariable String id, Model model){
+
+        MemberResponseDto member = memberService.getById(id);
+
+        model.addAttribute("user",member);
+        model.addAttribute("isAdminView", true);
+
+        return "edit-profile";
+    }
+
+    @PostMapping("/members/update/{id}")
+    public String updateMember(@PathVariable String id,
+                               MemberRequestDto dto){
+
+        memberService.update(id, dto);
+
+        return "redirect:/admin/members/profile/" + id;
     }
 
     @GetMapping("/members")
@@ -53,6 +74,17 @@ public class AdminController {
         Pageable pageable = PageRequest.of(page,size);
 
         return memberService.searchMembers(keyword,pageable);
+    }
+
+    @GetMapping("/members/profile/{id}")
+    public String viewMemberProfile(@PathVariable String id, Model model){
+
+        MemberResponseDto member = memberService.getById(id);
+
+        model.addAttribute("user", member);
+        model.addAttribute("isAdminView", true);
+
+        return "profile";
     }
 
     @DeleteMapping("/members/{id}")

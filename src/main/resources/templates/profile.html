@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Member Profile</title>
@@ -49,31 +50,56 @@
 
     <div class="card-body profile-info">
 
-        <h5><strong>ID:</strong>
+        <h5>
+            <strong>ID:</strong>
             <span th:text="${user.id}"></span>
         </h5>
 
-        <h5><strong>Name:</strong>
+        <h5>
+            <strong>Name:</strong>
             <span th:text="${user.name}"></span>
         </h5>
 
-        <h5><strong>Email:</strong>
+        <h5>
+            <strong>Email:</strong>
             <span th:text="${user.email}"></span>
         </h5>
 
-        <h5><strong>Phone:</strong>
+        <h5>
+            <strong>Phone:</strong>
             <span th:text="${user.phone}"></span>
         </h5>
 
-        <h5><strong>Role:</strong>
+        <h5>
+            <strong>Role:</strong>
             <span class="badge bg-primary"
                   th:text="${user.role}"></span>
         </h5>
 
+
         <div class="mt-4 text-center">
-            <a href="/logout" class="btn btn-danger">
+
+            <!-- Admin editing any member -->
+            <a th:if="${isAdminView}"
+               th:href="@{/admin/members/edit/{id}(id=${user.id})}"
+               class="btn btn-warning me-2">
+                Edit
+            </a>
+
+            <!-- Member editing own profile -->
+            <a th:if="${!isAdminView}"
+               th:href="@{/member/edit/{id}(id=${user.id})}"
+               class="btn btn-warning me-2">
+                Edit
+            </a>
+
+            <!-- Logout visible only for member -->
+            <a th:if="${!isAdminView}"
+               href="/logout"
+               class="btn btn-danger">
                 Logout
             </a>
+
         </div>
 
     </div>

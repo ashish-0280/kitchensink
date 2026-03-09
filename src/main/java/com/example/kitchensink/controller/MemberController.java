@@ -1,5 +1,6 @@
 package com.example.kitchensink.controller;
 
+import com.example.kitchensink.dto.MemberRequestDto;
 import com.example.kitchensink.dto.MemberResponseDto;
 import com.example.kitchensink.service.MemberService;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,7 @@ public class MemberController {
         MemberResponseDto member = memberService.getByEmail(email);
 
         model.addAttribute("user", member);
+        model.addAttribute("isAdminView", false);
 
         return "profile";
     }
@@ -45,5 +47,26 @@ public class MemberController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MemberResponseDto> getMember(@PathVariable String id) {
         return ResponseEntity.ok(memberService.getById(id));
+    }
+
+    @GetMapping("/edit")
+    public String editProfile(Model model, Principal principal){
+
+        MemberResponseDto member =
+                memberService.getByEmail(principal.getName());
+
+        model.addAttribute("user",member);
+        model.addAttribute("isAdminView", false);
+
+        return "edit-profile";
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateProfile(@PathVariable String id,
+                                MemberRequestDto dto){
+
+        memberService.update(id,dto);
+
+        return "redirect:/member/profile";
     }
 }
