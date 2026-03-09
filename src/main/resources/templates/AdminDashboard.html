@@ -183,52 +183,52 @@
     });
 
     const searchInput = document.getElementById("searchInput");
-const tableBody = document.getElementById("memberTable");
+    const tableBody = document.getElementById("memberTable");
 
-let timer;
+    let timer;
 
-searchInput.addEventListener("keyup", function(){
+    searchInput.addEventListener("keyup", function(){
 
-    clearTimeout(timer);
+        clearTimeout(timer);
 
-    timer = setTimeout(async () => {
+        timer = setTimeout(async () => {
 
-        const keyword = searchInput.value;
+            const keyword = searchInput.value;
 
-        const response = await fetch(`/admin/members/search?keyword=${keyword}`);
+            const response = await fetch(`/admin/members/search?keyword=${keyword}`);
 
-        const data = await response.json();
+            const data = await response.json();
 
-        tableBody.innerHTML = "";
+            tableBody.innerHTML = "";
 
-        data.content.forEach(member => {
+            data.content.forEach(member => {
 
-            const row = `
-                <tr>
-                    <td>${member.id}</td>
-                    <td>${member.name}</td>
-                    <td>${member.email}</td>
-                    <td>
-                        <a class="btn btn-sm btn-primary"
-                           href="/admin/members/profile/${member.id}">
-                           View
-                        </a>
+                const row = `
+                    <tr>
+                        <td>${member.id}</td>
+                        <td>${member.name}</td>
+                        <td>${member.email}</td>
+                        <td>
+                            <a class="btn btn-sm btn-primary"
+                               href="/admin/members/profile/${member.id}">
+                               View
+                            </a>
 
-                        <button class="btn btn-sm btn-danger delete-btn"
-                                data-id="${member.id}">
-                                Delete
-                        </button>
-                    </td>
-                </tr>
-            `;
+                            <button class="btn btn-sm btn-danger delete-btn"
+                                    data-id="${member.id}">
+                                    Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
 
-            tableBody.innerHTML += row;
+                tableBody.innerHTML += row;
 
-        });
+            });
 
-    },300);
+        },300);
 
-});
+    });
 
 </script>
 

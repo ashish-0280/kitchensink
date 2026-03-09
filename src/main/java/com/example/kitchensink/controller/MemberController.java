@@ -49,11 +49,11 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getById(id));
     }
 
-    @GetMapping("/edit")
-    public String editProfile(Model model, Principal principal){
+    @GetMapping("/edit/{id}")
+    public String editProfile(Model model, @PathVariable String id){
 
         MemberResponseDto member =
-                memberService.getByEmail(principal.getName());
+                memberService.getById(id);
 
         model.addAttribute("user",member);
         model.addAttribute("isAdminView", false);
