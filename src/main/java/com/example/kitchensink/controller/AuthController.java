@@ -9,10 +9,12 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthService authService;
@@ -22,26 +24,44 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+    public String signup(SignupRequestDto signupRequestDto) {
         SignupResponseDto response = authService.register(signupRequestDto);
-        return ResponseEntity.ok(response);
+        return "redirect:/auth/login";
+    }
+
+    @GetMapping("/signup")
+    public String showForm(Model model){
+        model.addAttribute("signupRequest", new SignupRequestDto());
+        return "Signup";
+    }
+
+    @GetMapping("/login")
+    public String showLogin(Model model){
+        model.addAttribute("user", new LoginRequestDto());
+        return "Login";
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto>login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public String login(LoginRequestDto loginRequestDto,
+                        HttpServletResponse response) {
 
         LoginResponseDto loginResponse = authService.login(loginRequestDto);
-        log.info("loginResponse {}", loginResponse);
+
         ResponseCookie cookie = ResponseCookie.from("token", loginResponse.getToken())
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
                 .maxAge(60 * 60)
-                .sameSite("None").domain("localhost")
+                .sameSite("Lax")
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
-        return ResponseEntity.ok(loginResponse);
+
+        if(loginResponse.getRole().equals("ADMIN")){
+            return "redirect:/admin/members";
+        }
+
+        return "redirect:/member/profile";
     }
 }
 

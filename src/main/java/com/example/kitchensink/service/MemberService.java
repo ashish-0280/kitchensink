@@ -46,6 +46,13 @@ public class MemberService {
         Member updated = memberRepository.save(existing);
         return modelMapper.map(updated, MemberResponseDto.class);
     }
+    public MemberResponseDto getByEmail(String email){
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return modelMapper.map(member, MemberResponseDto.class);
+    }
 
     public void delete(String id) {
         memberRepository.deleteById(id);

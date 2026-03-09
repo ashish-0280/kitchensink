@@ -46,10 +46,9 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/member/profile").hasRole("USER")
                         .requestMatchers("/admin/**").hasRole("ADMIN") //TODO Use @preAuth
-                        .requestMatchers("/member/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
-                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);

@@ -3,11 +3,14 @@ package com.example.kitchensink.controller;
 import com.example.kitchensink.dto.MemberResponseDto;
 import com.example.kitchensink.service.MemberService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/member")
 public class MemberController {
 
@@ -17,6 +20,20 @@ public class MemberController {
         this.memberService = memberService;
     }
 
+    @GetMapping("/profile")
+    public String getProfile(Model model) {
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        MemberResponseDto member = memberService.getByEmail(email);
+
+        model.addAttribute("user", member);
+
+        return "profile";
+    }
     //TODO Member can update itself
     @GetMapping("/{id}")
     public ResponseEntity<MemberResponseDto> getMember(@PathVariable String id) {

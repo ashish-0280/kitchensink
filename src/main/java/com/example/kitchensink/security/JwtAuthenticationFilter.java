@@ -38,19 +38,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userEmail = jwtService.extractEmail(jwt);
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (jwtService.isTokenValid(jwt, userEmail)) {
-                    String role = jwtService.extractClaim(jwt, claims -> claims.get("role", String.class));
-                    log.info("role {}", role);
-                    String authority;
-                    if(role.equals("ROLE_ADMIN")){
-                        authority = role;
-                    } else {
-                        authority = "ROLE_" + role;
-                    }
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userEmail,
-                            null,
-                            Collections.singletonList(
-                                    new SimpleGrantedAuthority(authority))
+                    String role = jwtService.extractClaim(jwt,
+                            claims -> claims.get("role", String.class));
+
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userEmail,
+                                    null,
+                                    Collections.singletonList(
+                                            new SimpleGrantedAuthority(role))
                             );
                     authToken.setDetails(
                             new WebAuthenticationDetailsSource()
@@ -66,8 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             cookie.setPath("/");
             cookie.setMaxAge(0);
             response.addCookie(cookie);
-
-            //response.sendRedirect("/auth/login");
+            response.sendRedirect("/auth/login");
             return;
         }
 
