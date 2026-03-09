@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -21,12 +22,14 @@ public class MemberController {
     }
 
     @GetMapping("/profile")
-    public String getProfile(Model model) {
+    public String getProfile(Model model, Principal principal) {
 
-        String email = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
+        String email;
+        if(SecurityContextHolder.getContext().getAuthentication() != null){
+            email = SecurityContextHolder.getContext().getAuthentication().getName();
+        } else {
+            email = principal.getName();
+        }
 
         MemberResponseDto member = memberService.getByEmail(email);
 
@@ -34,6 +37,7 @@ public class MemberController {
 
         return "profile";
     }
+
     //TODO Member can update itself
     @GetMapping("/{id}")
     public ResponseEntity<MemberResponseDto> getMember(@PathVariable String id) {

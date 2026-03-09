@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/member/profile").hasRole("USER")
+                        .requestMatchers("/kitchensink").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") //TODO Use @preAuth
                         .anyRequest().authenticated()
                 )
