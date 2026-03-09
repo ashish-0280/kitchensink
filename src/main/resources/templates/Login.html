@@ -29,5 +29,58 @@
         New here? <a th:href="@{/auth/signup}">Create an account</a>
     </p>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    document.querySelector("form").addEventListener("submit", async function(e){
+
+        e.preventDefault();
+
+        const email = document.querySelector("[name=email]").value;
+        const password = document.querySelector("[name=password]").value;
+
+        const response = await fetch("/auth/login",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({email,password})
+        });
+
+        const data = await response.json();
+
+        if(response.ok){
+
+            Swal.fire({
+                icon: "success",
+                title: "Login Successful",
+                text: "Redirecting...",
+                timer: 1000,
+                showConfirmButton: false
+            }).then(() => {
+
+                if(data.role === "ADMIN"){
+                    window.location="/admin/members";
+                }else{
+                    window.location="/member/profile";
+                }
+
+            });
+
+        }else{
+
+            Swal.fire({
+                icon:"error",
+                title:data.error,
+                text:data.message
+            });
+
+        }
+
+    });
+
+</script>
 </body>
 </html>

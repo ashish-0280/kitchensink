@@ -24,9 +24,13 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String signup(SignupRequestDto signupRequestDto) {
+    @ResponseBody
+    public ResponseEntity<SignupResponseDto> signup(
+            @RequestBody SignupRequestDto signupRequestDto) {
+
         SignupResponseDto response = authService.register(signupRequestDto);
-        return "redirect:/auth/login";
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/signup")
@@ -42,8 +46,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(LoginRequestDto loginRequestDto,
-                        HttpServletResponse response) {
+    @ResponseBody
+    public ResponseEntity<LoginResponseDto> login(
+            @RequestBody LoginRequestDto loginRequestDto,
+            HttpServletResponse response) {
 
         LoginResponseDto loginResponse = authService.login(loginRequestDto);
 
@@ -57,11 +63,7 @@ public class AuthController {
 
         response.addHeader("Set-Cookie", cookie.toString());
 
-        if(loginResponse.getRole().equals("ADMIN")){
-            return "redirect:/admin/members";
-        }
-
-        return "redirect:/member/profile";
+        return ResponseEntity.ok(loginResponse);
     }
 }
 
