@@ -2,6 +2,7 @@ package com.example.kitchensink.service;
 
 import com.example.kitchensink.dto.MemberRequestDto;
 import com.example.kitchensink.dto.MemberResponseDto;
+import com.example.kitchensink.exception.ResourceNotFoundException;
 import com.example.kitchensink.model.Member;
 import com.example.kitchensink.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
@@ -35,22 +36,27 @@ public class MemberService {
 
     public MemberResponseDto getById(String id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Member not found with id: " + id)
+                );
         return modelMapper.map(member, MemberResponseDto.class);
     }
 
     public MemberResponseDto update(String id, MemberRequestDto requestDto) {
         Member existing = memberRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Member not found with id: " + id)
+                );
         modelMapper.map(requestDto, existing);
         Member updated = memberRepository.save(existing);
         return modelMapper.map(updated, MemberResponseDto.class);
     }
+
     public MemberResponseDto getByEmail(String email){
-
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found with email: " + email)
+                );
         return modelMapper.map(member, MemberResponseDto.class);
     }
 

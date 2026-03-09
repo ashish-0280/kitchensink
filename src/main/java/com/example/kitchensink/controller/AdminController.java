@@ -5,6 +5,7 @@ import com.example.kitchensink.dto.MemberResponseDto;
 import com.example.kitchensink.service.MemberService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     private final MemberService memberService;
@@ -45,6 +47,7 @@ public class AdminController {
 
     @DeleteMapping("/members/{id}")
     @ResponseBody
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteMember(@PathVariable String id){
         memberService.delete(id);
         return ResponseEntity.ok("Deleted");

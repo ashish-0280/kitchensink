@@ -4,6 +4,9 @@ import com.example.kitchensink.dto.LoginRequestDto;
 import com.example.kitchensink.dto.LoginResponseDto;
 import com.example.kitchensink.dto.SignupRequestDto;
 import com.example.kitchensink.dto.SignupResponseDto;
+import com.example.kitchensink.exception.DuplicateResourceException;
+import com.example.kitchensink.exception.InvalidCredentialsException;
+import com.example.kitchensink.exception.ResourceNotFoundException;
 import com.example.kitchensink.model.Member;
 import com.example.kitchensink.repository.MemberRepository;
 import com.example.kitchensink.security.JwtService;
@@ -26,8 +29,9 @@ public class AuthService {
     }
 
     public SignupResponseDto register(SignupRequestDto signupRequestDto) {
-        if(memberRepository.findByEmail(signupRequestDto.getEmail()).isPresent()){
-            throw new RuntimeException("Error: Email is already registered!");
+
+        if(memberRepository.existsByEmail(signupRequestDto.getEmail())){
+            throw new DuplicateResourceException("Email already registered");
         }
         Member member = new Member();
         member.setName(signupRequestDto.getName());
@@ -39,20 +43,21 @@ public class AuthService {
         SignupResponseDto response = new SignupResponseDto();
         response.setEmail(member.getEmail());
         response.setMessage("User registered successfully!");
-        log.info("response{}", response);
         return response;
     }
 
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + loginRequestDto.getEmail()));
-
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found with email: " + loginRequestDto.getEmail()
+                        )
+                );
         if (!encoder.matches(loginRequestDto.getPassword(), member.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new InvalidCredentialsException("Invalid email or password");
         }
         String token = jwtService.generateToken(member);
         LoginResponseDto response = new LoginResponseDto();
-        log.info("response {}", response);
         response.setToken(token);
         response.setRole(member.getRole());
         response.setEmail(member.getEmail());

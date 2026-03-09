@@ -9,11 +9,11 @@
     <style>
 
         body{
-            background: #f4f6f9;
+            background:#f4f6f9;
         }
 
         .dashboard-header{
-            background: linear-gradient(135deg,#4e73df,#224abe);
+            background:linear-gradient(135deg,#4e73df,#224abe);
             color:white;
             padding:25px;
             border-radius:10px;
@@ -48,9 +48,18 @@
         <p class="mb-0">Manage all registered members</p>
     </div>
 
-    <span class="badge bg-light text-dark fs-6">
-        Members: <span th:text="${#lists.size(allMembers)}"></span>
-    </span>
+    <div class="d-flex align-items-center gap-3">
+
+        <span class="badge bg-light text-dark fs-6">
+            Members:
+            <span th:text="${#lists.size(allMembers)}"></span>
+        </span>
+
+        <a href="/logout" class="btn btn-danger btn-sm">
+            Logout
+        </a>
+
+    </div>
 
 </div>
 
@@ -86,6 +95,7 @@
             <tbody id="memberTable">
 
             <tr th:each="m : ${allMembers}" th:id="${m.id}">
+
                 <td th:text="${m.id}"></td>
                 <td th:text="${m.name}"></td>
                 <td th:text="${m.email}"></td>
@@ -119,9 +129,10 @@
 
     const searchInput = document.getElementById("searchInput");
 
-    searchInput.addEventListener("keyup", function() {
+    searchInput.addEventListener("keyup", function(){
 
         const filter = searchInput.value.toLowerCase();
+
         const rows = document.querySelectorAll("#memberTable tr");
 
         rows.forEach(row => {
@@ -130,15 +141,16 @@
             const email = row.children[2].innerText.toLowerCase();
 
             if(name.includes(filter) || email.includes(filter)){
-                row.style.display = "";
-            }
-            else{
-                row.style.display = "none";
+                row.style.display="";
+            }else{
+                row.style.display="none";
             }
 
         });
 
     });
+
+
 
     document.querySelectorAll(".delete-btn").forEach(btn => {
 
@@ -150,8 +162,8 @@
                 return;
             }
 
-            const response = await fetch("/admin/members/" + id, {
-                method: "DELETE"
+            const response = await fetch("/admin/members/" + id,{
+                method:"DELETE"
             });
 
             if(response.ok){
@@ -166,7 +178,6 @@
 
 
 </script>
-
 
 </body>
 </html>

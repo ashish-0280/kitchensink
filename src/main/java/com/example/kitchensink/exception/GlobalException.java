@@ -56,4 +56,37 @@ public class GlobalException {
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ErrorResponseDto> handleDuplicate(
+            DuplicateResourceException ex,
+            HttpServletRequest request){
+
+        ErrorResponseDto error = new ErrorResponseDto(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Conflict",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error,HttpStatus.CONFLICT);
+    }
+
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidCredentials(
+            InvalidCredentialsException ex,
+            HttpServletRequest request){
+
+        ErrorResponseDto error = new ErrorResponseDto(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
+    }
 }
