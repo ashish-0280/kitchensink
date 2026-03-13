@@ -31,7 +31,7 @@ public class Member {
     private String phone;
 
     @NotBlank
-    @Size(min = 2)
+    @Size(min = 8)
     private String password;
 
     private String role;

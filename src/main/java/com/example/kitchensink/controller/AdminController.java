@@ -2,10 +2,14 @@ package com.example.kitchensink.controller;
 
 import com.example.kitchensink.dto.MemberRequestDto;
 import com.example.kitchensink.dto.MemberResponseDto;
+import com.example.kitchensink.dto.SignupRequestDto;
+import com.example.kitchensink.dto.SignupResponseDto;
+import com.example.kitchensink.service.AuthService;
 import com.example.kitchensink.service.MemberService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +24,15 @@ public class AdminController {
 
     public AdminController(MemberService memberService) {
         this.memberService = memberService;
+    }
+
+    @PostMapping("/members/create")
+    @ResponseBody
+    public ResponseEntity<MemberResponseDto> create(
+            @RequestBody MemberRequestDto memberRequestDto) {
+
+        MemberResponseDto response = memberService.create(memberRequestDto);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/members/edit/{id}")
@@ -43,15 +56,13 @@ public class AdminController {
     }
 
     @GetMapping("/members")
-    public String getAllMembers(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
+    public String getAllMembers(@RequestParam(required = false) String keyword,
+                                @RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "5") int size,
             Model model
     ){
 
         Pageable pageable = PageRequest.of(page,size);
-
         Page<MemberResponseDto> members =
                 memberService.searchMembers(keyword,pageable);
 
@@ -59,6 +70,7 @@ public class AdminController {
         model.addAttribute("currentPage",page);
         model.addAttribute("totalPages",members.getTotalPages());
         model.addAttribute("keyword",keyword);
+        model.addAttribute("totalMembers",members.getTotalElements());
 
         return "AdminDashboard";
     }

@@ -19,6 +19,5 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             throws IOException, ServletException {
 
         response.sendRedirect("/access-denied");
-
     }
 }

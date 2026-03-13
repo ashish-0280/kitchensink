@@ -1,11 +1,10 @@
 package com.example.kitchensink.controller;
 
 import com.example.kitchensink.dto.*;
-import com.example.kitchensink.model.Member;
 import com.example.kitchensink.service.AuthService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -55,10 +54,10 @@ public class AuthController {
 
         ResponseCookie cookie = ResponseCookie.from("token", loginResponse.getToken())
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
+                .sameSite("Strict")
                 .path("/")
                 .maxAge(60 * 60)
-                .sameSite("Lax")
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());

@@ -1,5 +1,6 @@
 package com.example.kitchensink.security;
 
+import com.example.kitchensink.service.BlacklistToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -21,16 +22,21 @@ import java.util.Collections;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
     private final JwtService jwtService;
+    private final BlacklistToken blacklistToken;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String jwt = getTokenFromCookie(request);
+        String jwt = jwtService.getTokenFromCookie(request);
         if (jwt == null) {
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        if(blacklistToken.isBlacklisted(jwt)){
+            response.sendRedirect("/auth/login");
             return;
         }
 
@@ -67,20 +73,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-
-    private String getTokenFromCookie(HttpServletRequest request){
-        if(request.getCookies() == null){
-            return null;
-        }
-
-        for(Cookie cookie: request.getCookies()){
-            log.info("cookie {}", cookie);
-            if(cookie.getName().equals("token")){
-                return cookie.getValue();
-            }
-        }
-        return null;
     }
 }

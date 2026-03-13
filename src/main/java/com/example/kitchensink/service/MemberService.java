@@ -2,12 +2,16 @@ package com.example.kitchensink.service;
 
 import com.example.kitchensink.dto.MemberRequestDto;
 import com.example.kitchensink.dto.MemberResponseDto;
+import com.example.kitchensink.dto.SignupRequestDto;
+import com.example.kitchensink.dto.SignupResponseDto;
+import com.example.kitchensink.exception.DuplicateResourceException;
 import com.example.kitchensink.exception.ResourceNotFoundException;
 import com.example.kitchensink.model.Member;
 import com.example.kitchensink.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,10 +19,32 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder encoder;
 
-    public MemberService(MemberRepository memberRepository, ModelMapper modelMapper) {
+    public MemberService(MemberRepository memberRepository, ModelMapper modelMapper, PasswordEncoder encoder) {
         this.memberRepository = memberRepository;
         this.modelMapper = modelMapper;
+        this.encoder = encoder;
+    }
+
+    public MemberResponseDto create(MemberRequestDto memberRequestDto) {
+
+        if(memberRepository.existsByEmail(memberRequestDto.getEmail())){
+            throw new DuplicateResourceException("Email already registered");
+        }
+        Member member = new Member();
+        member.setName(memberRequestDto.getName());
+        member.setEmail(memberRequestDto.getEmail());
+        member.setPhone(memberRequestDto.getPhone());
+        member.setPassword(encoder.encode(memberRequestDto.getPassword()));
+        member.setRole(memberRequestDto.getRole());
+        memberRepository.save(member);
+        MemberResponseDto response = new MemberResponseDto();
+        response.setEmail(member.getName());
+        response.setEmail(member.getEmail());
+        response.setEmail(member.getPhone());
+        response.setEmail(member.getRole());
+        return response;
     }
 
     public Page<MemberResponseDto> searchMembers(String keyword, Pageable pageable){
