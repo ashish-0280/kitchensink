@@ -40,10 +40,11 @@ public class MemberService {
         member.setRole(memberRequestDto.getRole());
         memberRepository.save(member);
         MemberResponseDto response = new MemberResponseDto();
-        response.setEmail(member.getName());
+        response.setId(member.getId());
+        response.setName(member.getName());
         response.setEmail(member.getEmail());
-        response.setEmail(member.getPhone());
-        response.setEmail(member.getRole());
+        response.setPhone(member.getPhone());
+        response.setRole(member.getRole());
         return response;
     }
 
