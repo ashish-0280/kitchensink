@@ -6,6 +6,7 @@ import com.example.kitchensink.dto.SignupRequestDto;
 import com.example.kitchensink.dto.SignupResponseDto;
 import com.example.kitchensink.service.AuthService;
 import com.example.kitchensink.service.MemberService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +30,7 @@ public class AdminController {
     @PostMapping("/members/create")
     @ResponseBody
     public ResponseEntity<MemberResponseDto> create(
-            @RequestBody MemberRequestDto memberRequestDto) {
-
+            @Valid @RequestBody MemberRequestDto memberRequestDto) { // Added @Valid
         MemberResponseDto response = memberService.create(memberRequestDto);
         return ResponseEntity.ok(response);
     }

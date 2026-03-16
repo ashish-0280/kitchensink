@@ -32,7 +32,7 @@ public class GlobalException {
                 .getFieldErrors()
                 .stream()
                 .map(FieldError::getDefaultMessage)
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.joining(", ")); // Collects all errors like "Name is required, Phone must be 10 digits"
 
         ErrorResponseDto error = new ErrorResponseDto(
                 LocalDateTime.now(),
