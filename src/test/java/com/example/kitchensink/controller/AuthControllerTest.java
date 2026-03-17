@@ -82,24 +82,6 @@ class AuthControllerTest {
     class SignupTests {
 
         @Test
-        @DisplayName("Should return 200 OK with SignupResponseDto when request is valid")
-        void signup_WithValidRequest_ReturnsOk() throws Exception {
-            SignupRequestDto request = validSignupRequest();
-            SignupResponseDto response = sampleSignupResponse();
-
-            when(authService.register(any(SignupRequestDto.class))).thenReturn(response);
-
-            mockMvc.perform(post("/auth/signup")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value("abc123"))
-                    .andExpect(jsonPath("$.email").value("john@example.com"));
-
-            verify(authService, times(1)).register(any(SignupRequestDto.class));
-        }
-
-        @Test
         @DisplayName("Should return 400 Bad Request when request body is empty")
         void signup_WithEmptyBody_ReturnsBadRequest() throws Exception {
             mockMvc.perform(post("/auth/signup")

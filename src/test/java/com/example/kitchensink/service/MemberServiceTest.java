@@ -74,6 +74,14 @@ class MemberServiceTest {
 
     @Test
     void delete_Success() {
+        Member member = new Member();
+        member.setId("123");
+        member.setName("John Doe");
+        member.setEmail("john.doe@example.com");
+        member.setPhone("1234567890");
+        member.setPassword("password123");
+        member.setRole("ROLE_USER");
+        when(memberRepository.findById("123")).thenReturn(Optional.of(member));
         doNothing().when(memberRepository).deleteById("123");
         memberService.delete("123");
         verify(memberRepository, times(1)).deleteById("123");

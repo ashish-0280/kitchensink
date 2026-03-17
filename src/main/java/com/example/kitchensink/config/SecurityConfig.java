@@ -3,6 +3,8 @@ package com.example.kitchensink.config;
 import com.example.kitchensink.security.CustomAccessDeniedHandler;
 import com.example.kitchensink.security.CustomAuthenticationEntryPoint;
 import com.example.kitchensink.security.JwtAuthenticationFilter;
+import com.example.kitchensink.security.JwtService;
+import com.example.kitchensink.service.BlacklistToken;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -25,13 +27,20 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
+    private final JwtService jwtService;
+    private final BlacklistToken blacklistToken;
+
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
                           CustomAccessDeniedHandler accessDeniedHandler,
-                          CustomAuthenticationEntryPoint authenticationEntryPoint) {
+                          CustomAuthenticationEntryPoint authenticationEntryPoint,
+                          JwtService jwtService,
+                          BlacklistToken blacklistToken) {
 
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.jwtService = jwtService;
+        this.blacklistToken = blacklistToken;
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -45,6 +54,12 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .deleteCookies("token")
                         .logoutSuccessUrl("/auth/login")
+                        .addLogoutHandler((request, response, authentication) -> {
+                            String token = jwtService.getTokenFromCookie(request);
+                            if (token != null) {
+                                blacklistToken.blacklistToken(token);
+                            }
+                        })
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -7,22 +7,42 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignupRequestDto {
 
-    @NotBlank(message = "Name cannot be empty")
+    @NotBlank(message = "Name is required")
+    @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
+    @Pattern(
+            regexp = "^[A-Za-z]+([ '-][A-Za-z]+)*$",
+            message = "Name must contain only letters, spaces, hyphens, or apostrophes"
+    )
     private String name;
 
-    @Email(message = "Please provide a valid email")
     @NotBlank(message = "Email is required")
+    @Email(
+            regexp = "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$",
+            message = "Invalid email format"
+    )
+    @Size(max = 100, message = "Email must not exceed 100 characters")
+    @Indexed(unique = true)
     private String email;
 
-    @Pattern(regexp = "^\\d{10}$", message = "Phone must be 10 digits")
+    @NotBlank(message = "Phone number is required")
+    @Pattern(
+            regexp = "^[6-9]\\d{9}$",
+            message = "Phone number must be 10 digits and start with 6, 7, 8, or 9"
+    )
     private String phone;
 
-    @Size(min = 8, message = "Password must be at least 8 characters")
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&_\\-#])[A-Za-z\\d@$!%*?&_\\-#]+$",
+            message = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&_-#)"
+    )
     private String password;
 }

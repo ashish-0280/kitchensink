@@ -1,6 +1,8 @@
 package com.example.kitchensink.security;
 
+import com.example.kitchensink.repository.MemberRepository;
 import com.example.kitchensink.service.BlacklistToken;
+import com.example.kitchensink.service.MemberService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -24,6 +26,7 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final BlacklistToken blacklistToken;
+    private final MemberService memberService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -42,6 +45,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String userEmail = jwtService.extractEmail(jwt);
+            if(memberService.getByEmail(userEmail) == null){
+                response.sendRedirect("/auth/login");
+                return;
+            }
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (jwtService.isTokenValid(jwt, userEmail)) {
                     String role = jwtService.extractClaim(jwt,

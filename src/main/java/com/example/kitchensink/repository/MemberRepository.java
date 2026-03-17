@@ -14,7 +14,7 @@ public interface MemberRepository extends MongoRepository<Member,String> {
 
     boolean existsByEmail(String email);
 
-    @Query("{ $or: [ { 'name': { $regex: ?0, $options: 'i' } }, { 'email': { $regex: ?0, $options: 'i' } } ] }")
+    @Query("{ $or: " + "[ " + "{ 'name': { $regex: ?0, $options: 'i' } }, { 'email': { $regex: ?0, $options: 'i' } } ] }")
     Page<Member> searchMembers(String keyword, Pageable pageable);
 
 }

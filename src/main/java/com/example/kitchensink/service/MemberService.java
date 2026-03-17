@@ -4,6 +4,7 @@ import com.example.kitchensink.dto.MemberRequestDto;
 import com.example.kitchensink.dto.MemberResponseDto;
 import com.example.kitchensink.dto.SignupRequestDto;
 import com.example.kitchensink.dto.SignupResponseDto;
+import com.example.kitchensink.exception.AdminDeleteNotAllowedException;
 import com.example.kitchensink.exception.DuplicateResourceException;
 import com.example.kitchensink.exception.ResourceNotFoundException;
 import com.example.kitchensink.model.Member;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class MemberService {
@@ -96,11 +99,17 @@ public class MemberService {
 
         Member updated = memberRepository.save(member);
 
+
         return modelMapper.map(updated, MemberResponseDto.class);
     }
 
     public void delete(String id){
-        memberRepository.deleteById(id);
+        Optional<Member> member = memberRepository.findById(id);
+        if(member.isPresent() && member.get().getRole().equals("ROLE_USER")) {
+            memberRepository.deleteById(id);
+        } else {
+            throw new AdminDeleteNotAllowedException("Admin deletion is not allowed.");
+        }
     }
 
 }
