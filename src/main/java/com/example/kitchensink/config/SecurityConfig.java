@@ -33,7 +33,6 @@ public class SecurityConfig {
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
     }
-    //TODO Error page in thymeleaf
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -48,13 +47,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/auth/login")
                 )
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) //TODO Session Stateful-Stateless
-
-                        //TODO REST API vs NORMAL REST
-                        //TODO Compound index (first name : 1, **middle name : 1, last name : 1)
-                        //TODO MongoDB Java Driver
-                        //TODO Administrator and Developer Learning path course on mongodb University
-                        //TODO Application resolve Both (JS and Thymleaf)
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()

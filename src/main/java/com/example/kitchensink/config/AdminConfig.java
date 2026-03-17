@@ -24,7 +24,6 @@ public class AdminConfig {
             if (repository.findByEmail(adminEmail).isEmpty()) {
 
                 Member admin = new Member();
-
                 admin.setEmail(adminEmail);
                 admin.setPassword(encoder.encode(adminPassword));
                 admin.setRole("ADMIN");
